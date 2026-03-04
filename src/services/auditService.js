@@ -1,10 +1,13 @@
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 
 /**
  * Service for creating tamper-evident audit logs.
  */
-export const auditLogService = {
+/**
+ * Service for creating tamper-evident audit logs.
+ */
+export const auditService = {
     /**
      * Log a critical event.
      * @param {string} actionType - E.g., 'ROUND_LOCK', 'SCORE_SUBMITTED', 'TEAM_QUALIFIED', 'PAYMENT_VERIFIED'

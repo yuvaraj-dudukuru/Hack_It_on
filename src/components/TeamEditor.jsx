@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { FileText, Link as LinkIcon } from 'lucide-react';
 

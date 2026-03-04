@@ -13,7 +13,7 @@ import {
     Crown
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { auth } from '../firebaseConfig';
+import { auth } from '../config/firebaseConfig';
 import { signOut } from 'firebase/auth';
 import { cn } from '../design-system/theme';
 

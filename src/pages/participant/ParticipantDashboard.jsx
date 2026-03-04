@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { db } from '../../config/firebaseConfig';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { Users as UsersIcon, Shield, Send, CheckCircle2, Clock } from 'lucide-react';
+import SubmissionForm from '../../components/participant/SubmissionForm';
 
 const ParticipantDashboard = () => {
     const { userData, currentUser } = useAuth();

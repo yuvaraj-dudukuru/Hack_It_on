@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 import { doc, onSnapshot } from 'firebase/firestore';
 
 function TeamMemberRoute() {

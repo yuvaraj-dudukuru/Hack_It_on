@@ -8,21 +8,21 @@ import ProtectedRoute from './components/ProtectedRoute.jsx';
 import TeamMemberRoute from './components/TeamMemberRoute.jsx';
 import LockGuard from './components/LockGuard.jsx';
 
-import HomePage from './pages/HomePage.jsx';
-import LoginPage from './pages/LoginPage.jsx';
-import RegisterPage from './pages/RegisterPage.jsx';
-import ProfilePage from './pages/ProfilePage.jsx';
-import HackathonsPage from './pages/HackathonsPage.jsx';
-import HackathonDetailPage from './pages/HackathonDetailPage.jsx';
-import LftPostDetailPage from './pages/LftPostDetailPage.jsx';
-import DashboardPage from './pages/DashboardPage.jsx';
-import JoinByCodePage from './pages/JoinByCodePage.jsx';
-import TeamWorkspacePage from './pages/TeamWorkspacePage.jsx';
+import HomePage from './pages/public/HomePage.jsx';
+import LoginPage from './pages/public/LoginPage.jsx';
+import RegisterPage from './pages/public/RegisterPage.jsx';
+import ProfilePage from './pages/public/ProfilePage.jsx';
+import HackathonsPage from './pages/public/HackathonsPage.jsx';
+import HackathonDetailPage from './pages/public/HackathonDetailPage.jsx';
+import LftPostDetailPage from './pages/public/LftPostDetailPage.jsx';
+import DashboardPage from './pages/public/DashboardPage.jsx';
+import JoinByCodePage from './pages/public/JoinByCodePage.jsx';
+import TeamWorkspacePage from './pages/participant/TeamWorkspacePage.jsx';
 
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import JudgeDashboard from './pages/judge/JudgeDashboard.jsx';
 import ParticipantDashboard from './pages/participant/ParticipantDashboard.jsx';
-import LeaderboardPage from './pages/LeaderboardPage.jsx';
+import LeaderboardPage from './pages/public/LeaderboardPage.jsx';
 
 function App() {
   const { currentUser, role } = useAuth();

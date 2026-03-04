@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { auth, db } from '../firebaseConfig.js';
+import { auth, db } from '../../config/firebaseConfig.js';
 import {
   signInWithEmailAndPassword,
   GoogleAuthProvider,
   GithubAuthProvider,
   signInWithPopup
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import AuthLayout from '../components/AuthLayout.jsx';
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import AuthLayout from '../../components/AuthLayout.jsx';
+import { teamService } from '../../services/teamService';
 import { Eye, EyeOff } from 'lucide-react';
 
 function LoginPage() {
@@ -30,9 +31,9 @@ function LoginPage() {
     setLoading(true);
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      // Fetch user role to decide redirect
-      const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
-      const role = userDoc.exists() ? userDoc.data().role : 'participant';
+      // Fetch user role via teamService
+      const userProfile = await teamService.getUserProfile(userCredential.user.uid);
+      const role = userProfile ? userProfile.role : 'participant';
 
       setLoginState('success');
       setTimeout(() => {

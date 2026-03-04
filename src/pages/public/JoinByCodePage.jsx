@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { db } from '../firebaseConfig';
+import { db } from '../../config/firebaseConfig';
 import { collection, query, where, getDocs, doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 
@@ -19,14 +19,14 @@ function JoinByCodePage() {
     const fetchPostByCode = async () => {
       setLoading(true);
       setError('');
-      
+
       try {
         const postsRef = collection(db, 'lftPosts');
         // Query Firestore for a document matching this join code
         const q = query(postsRef, where("joinCode", "==", joinCode));
-        
+
         const querySnapshot = await getDocs(q);
-        
+
         if (querySnapshot.empty) {
           setError('Invalid or expired join code.');
         } else {
@@ -51,9 +51,9 @@ function JoinByCodePage() {
       navigate('/login'); // Not logged in
       return;
     }
-    
+
     if (!post) return; // No post found
-    
+
     // Check if user is already on the team
     if (post.teamMembers.includes(currentUser.uid)) {
       navigate(`/post/${post.id}`); // Already on the team, just go to the page
@@ -73,17 +73,17 @@ function JoinByCodePage() {
       // --- TYPO FIX 1: Was 'lfsPosts' ---
       const postRef = doc(db, 'lftPosts', post.id);
       const isNowFull = (post.teamMembers.length + 1) >= post.maxTeamSize;
-      
+
       await updateDoc(postRef, {
         teamMembers: arrayUnion(currentUser.uid),
         isFull: isNowFull
       });
-      
+
       // Success! Send them to the team page
       navigate(`/post/${post.id}`);
-      
-    // --- TYPO FIX 2: Was (err)_ ---
-    } catch (err) { 
+
+      // --- TYPO FIX 2: Was (err)_ ---
+    } catch (err) {
       console.error("Error joining team: ", err);
       setError('Failed to join team. Please try again.');
       setIsJoining(false);
@@ -102,7 +102,7 @@ function JoinByCodePage() {
       <div className="p-8 text-center">
         <h1 className="text-3xl font-bold text-red-500 mb-4">Invite Not Found</h1>
         <p className="text-gray-300 text-lg mb-8">{error}</p>
-        <Link 
+        <Link
           to="/hackathons"
           className="px-6 py-3 rounded-lg bg-green-500 hover:bg-green-600 text-white font-bold transition duration-300"
         >
@@ -130,7 +130,7 @@ function JoinByCodePage() {
           <p className="text-gray-400 mb-6">
             Team is currently {post.teamMembers.length} / {post.maxTeamSize}
           </p>
-          
+
           <button
             onClick={handleJoin}
             disabled={isJoining}

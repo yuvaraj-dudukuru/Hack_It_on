@@ -1,33 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, onSnapshot, doc, updateDoc, getDocs } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
+import { db } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/AuthContext';
 import { hackathonService } from '../../services/hackathonService';
-import { auditLogService } from '../../services/auditLogService';
-import { scoreAggregationService } from '../../services/scoreAggregationService';
+import { auditService } from '../../services/auditService';
+import { scoreService } from '../../services/scoreService';
 import { Users, CreditCard, Send, CheckCircle2, XCircle, Search, Filter, Download, MoreHorizontal, Lock, Unlock, Calendar, Calculator } from 'lucide-react';
+
+import { useTeams } from '../../hooks/useTeams';
 
 const AdminDashboard = () => {
     const { userData } = useAuth();
-    const [teams, setTeams] = useState([]);
+    const { teams, loading } = useTeams();
     const [settings, setSettings] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
 
     useEffect(() => {
-        const teamUnsubscribe = onSnapshot(query(collection(db, 'teams')), (snapshot) => {
-            const teamData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setTeams(teamData);
-            setLoading(false);
-        });
-
         const settingsUnsubscribe = hackathonService.subscribeToSettings(setSettings);
-
-        return () => {
-            teamUnsubscribe();
-            settingsUnsubscribe();
-        };
+        return () => settingsUnsubscribe();
     }, []);
 
     const updateTeamStatus = async (teamId, field, value) => {
@@ -36,7 +27,7 @@ const AdminDashboard = () => {
             await updateDoc(teamRef, { [field]: value });
 
             // Audit Log
-            await auditLogService.logEvent(
+            await auditService.logEvent(
                 'TEAM_STATUS_UPDATE',
                 userData.uid,
                 'admin',
@@ -51,7 +42,7 @@ const AdminDashboard = () => {
     const handleFinalizeRound = async (teamId) => {
         if (!window.confirm('Are you sure you want to finalize scores for this team?')) return;
         try {
-            await scoreAggregationService.finalizeTeamRound(teamId, settings.currentRound, userData.uid);
+            await scoreService.finalizeTeamRound(teamId, settings.currentRound, userData.uid);
             alert('Round finalized and leaderboard updated.');
         } catch (error) {
             alert(`Finalization failed: ${error.message}`);
@@ -65,7 +56,7 @@ const AdminDashboard = () => {
             await hackathonService.updateRoundSettings({
                 [`${roundKey}.isLocked`]: newLockedState
             });
-            await auditLogService.logEvent(
+            await auditService.logEvent(
                 'ROUND_LOCK_TOGGLE',
                 userData.uid,
                 'admin',

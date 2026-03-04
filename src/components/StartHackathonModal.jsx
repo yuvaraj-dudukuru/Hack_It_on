@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 import { doc, updateDoc, Timestamp } from 'firebase/firestore';
 
 function StartHackathonModal({ teamId, onClose }) {
@@ -9,8 +9,8 @@ function StartHackathonModal({ teamId, onClose }) {
 
   const handleStart = async () => {
     if (!projectName.trim()) {
-        alert("Please enter a project name to start.");
-        return;
+      alert("Please enter a project name to start.");
+      return;
     }
     setLoading(true);
     try {
@@ -35,7 +35,7 @@ function StartHackathonModal({ teamId, onClose }) {
     <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4">
       <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full">
         <h2 className="text-xl font-bold text-white mb-4">Start Hackathon Timer</h2>
-        
+
         {/* 3. New Input Field */}
         <div className="mb-4">
           <label className="block text-gray-300 text-sm font-bold mb-2">Official Project Name</label>
@@ -65,7 +65,7 @@ function StartHackathonModal({ teamId, onClose }) {
 
         <div className="flex justify-end gap-3">
           <button onClick={onClose} className="px-4 py-2 text-gray-300 hover:text-white">Cancel</button>
-          <button 
+          <button
             onClick={handleStart}
             disabled={loading || !projectName.trim()}
             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded transition disabled:bg-gray-600"

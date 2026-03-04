@@ -1,8 +1,8 @@
+import React, { useState } from 'react';
 import { Github, Globe, FileText, CheckCircle2, XCircle, Loader2, AlertCircle } from 'lucide-react';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
+import { db } from '../../config/firebaseConfig';
 import { useRoundGuard } from '../../hooks/useRoundGuard';
-import { hackathonService } from '../../services/hackathonService';
+import { submissionService } from '../../services/submissionService';
 
 const SubmissionForm = ({ teamId, existingSubmission }) => {
     const { status, isActionAllowed, loading: guardLoading } = useRoundGuard(1);
@@ -21,34 +21,14 @@ const SubmissionForm = ({ teamId, existingSubmission }) => {
             return;
         }
 
-        // Basic URL format check
-        const githubRegex = /^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w.-]+\/?$/;
-        if (!githubRegex.test(url)) {
-            setRepoStatus('invalid');
-            return;
-        }
-
         setIsValidatingRepo(true);
         setRepoStatus('loading');
 
         try {
-            // Extract owner and repo
-            const parts = url.replace(/\/$/, '').split('/');
-            const owner = parts[parts.length - 2];
-            const repo = parts[parts.length - 1];
-
-            const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.private === false) {
-                    setRepoStatus('valid');
-                } else {
-                    setRepoStatus('invalid');
-                    setMessage({ type: 'error', text: 'Repository must be public.' });
-                }
-            } else {
-                setRepoStatus('invalid');
-                setMessage({ type: 'error', text: 'Repository not found or API limit reached.' });
+            const result = await submissionService.validateGitHubRepo(url);
+            setRepoStatus(result.status);
+            if (result.status === 'invalid') {
+                setMessage({ type: 'error', text: result.message });
             }
         } catch (error) {
             setRepoStatus('invalid');
@@ -69,19 +49,15 @@ const SubmissionForm = ({ teamId, existingSubmission }) => {
         setMessage(null);
 
         try {
-            const submissionRef = doc(db, 'submissions', teamId);
-            await setDoc(submissionRef, {
-                teamId,
+            await submissionService.submitProject(teamId, {
                 pptLink,
                 githubLink,
                 deployLink,
-                submittedAt: serverTimestamp(),
-                lastUpdated: serverTimestamp()
-            }, { merge: true });
+                round: 1 // Default or context-based
+            });
 
             setMessage({ type: 'success', text: 'Submission successful!' });
         } catch (error) {
-            console.error("Submission error:", error);
             setMessage({ type: 'error', text: 'Failed to submit. Please try again.' });
         } finally {
             setSubmitting(false);
@@ -176,8 +152,8 @@ const SubmissionForm = ({ teamId, existingSubmission }) => {
                     type="submit"
                     disabled={submitting || repoStatus !== 'valid' || !isActionAllowed}
                     className={`w-full py-5 rounded-2xl font-black text-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(6,182,212,0.2)] ${isActionAllowed
-                            ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-gray-950'
-                            : 'bg-white/5 text-gray-500 border border-white/5'
+                        ? 'bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-gray-950'
+                        : 'bg-white/5 text-gray-500 border border-white/5'
                         }`}
                 >
                     {submitting ? 'Transmitting Source...' : (

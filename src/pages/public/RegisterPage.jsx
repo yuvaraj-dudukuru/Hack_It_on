@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, db } from '../firebaseConfig';
+import { auth, db } from '../../config/firebaseConfig';
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
-  GithubAuthProvider,      // <-- THIS IS THE FIX (lowercase 'h')
+  GithubAuthProvider,
   signInWithPopup
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import { teamService } from '../../services/teamService';
 
 function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -22,14 +23,13 @@ function RegisterPage() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      console.log('User registered:', user);
 
-      const docRef = doc(db, 'users', user.uid);
-      await setDoc(docRef, {
+      await teamService.updateUserProfile(user.uid, {
         displayName: '',
         email: user.email,
-        photoURL: ''
-      }, { merge: true });
+        photoURL: '',
+        role: 'participant'
+      });
 
       navigate('/');
     } catch (err) {

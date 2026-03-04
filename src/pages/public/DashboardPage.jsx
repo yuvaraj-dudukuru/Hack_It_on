@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { db } from '../firebaseConfig';
+import { db } from '../../config/firebaseConfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import { Trophy, Rocket, Target, Zap, Users, LayoutDashboard } from 'lucide-react';

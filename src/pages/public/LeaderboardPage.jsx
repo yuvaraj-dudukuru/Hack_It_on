@@ -1,34 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { collection, query, orderBy, onSnapshot, where } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../../config/firebaseConfig';
 import { Trophy, Medal, Crown, Search, Filter } from 'lucide-react';
 
+import { useLeaderboard } from '../../hooks/useLeaderboard';
+
 const LeaderboardPage = () => {
-    const [teams, setTeams] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { standings: teams, loading } = useLeaderboard();
     const [searchTerm, setSearchTerm] = useState('');
-
-    useEffect(() => {
-        // Only show data from the isolated leaderboard collection for public viewing
-        const q = query(
-            collection(db, 'leaderboard'),
-            orderBy('totalScore', 'desc')
-        );
-
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const teamData = snapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data()
-            }));
-            setTeams(teamData);
-            setLoading(false);
-        }, (error) => {
-            console.error("Leaderboard error:", error);
-            setLoading(false);
-        });
-
-        return () => unsubscribe();
-    }, []);
 
     const filteredTeams = teams.filter(team =>
         team.teamName?.toLowerCase().includes(searchTerm.toLowerCase())

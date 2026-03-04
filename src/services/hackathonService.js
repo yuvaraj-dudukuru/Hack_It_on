@@ -1,5 +1,5 @@
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 
 const CONFIG_DOC_PATH = 'config/hackathonSettings';
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { db } from '../firebaseConfig';
+import { db, auth } from '../../config/firebaseConfig';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import CreatePostModal from '../components/CreatePostModal';
@@ -299,7 +299,7 @@ function HackathonDetailPage() {
                     </div>
 
                     <Link
-                      to={`/post/${post.id}`}
+                      to={`/ post / ${post.id} `}
                       className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300 font-bold transition-all duration-300 border border-blue-500/30 hover:border-blue-500/50"
                     >
                       <span>View & Join</span>

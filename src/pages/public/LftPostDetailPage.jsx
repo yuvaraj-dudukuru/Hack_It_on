@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { db } from '../firebaseConfig.js'; // Added .js extension
+import { db } from '../../config/firebaseConfig';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot } from 'firebase/firestore';
-import { useAuth } from '../context/AuthContext.jsx'; // Added .jsx extension
+import { useAuth } from '../../context/AuthContext';
 
 function LftPostDetailPage() {
   const { postId } = useParams();
@@ -47,7 +47,7 @@ function LftPostDetailPage() {
   useEffect(() => {
     const fetchProfiles = async () => {
       if (!post) return;
-      
+
       const getUsers = async (userIds) => {
         if (!userIds || userIds.length === 0) return [];
         return Promise.all(userIds.map(async (uid) => {
@@ -90,34 +90,34 @@ function LftPostDetailPage() {
   // Admin Accepts Request
   const handleAcceptRequest = async (userId) => {
     if (!isUserCreator || isTeamFull) return;
-    
-    setPendingRequests(prev => prev.filter(u => u.id !== userId)); 
+
+    setPendingRequests(prev => prev.filter(u => u.id !== userId));
 
     try {
       const postRef = doc(db, 'lftPosts', postId);
       const isNowFull = (post.teamMembers.length + 1) >= post.maxTeamSize;
-      
+
       await updateDoc(postRef, {
         joinRequests: arrayRemove(userId),
         teamMembers: arrayUnion(userId),
         isFull: isNowFull
       });
     } catch (err) {
-       console.error("Error accepting:", err);
-       setActionError("Failed to accept user.");
+      console.error("Error accepting:", err);
+      setActionError("Failed to accept user.");
     }
   };
 
   // Admin Declines Request
   const handleDeclineRequest = async (userId) => {
     if (!isUserCreator) return;
-    setPendingRequests(prev => prev.filter(u => u.id !== userId)); 
+    setPendingRequests(prev => prev.filter(u => u.id !== userId));
     try {
       await updateDoc(doc(db, 'lftPosts', postId), {
         joinRequests: arrayRemove(userId)
       });
     } catch (err) {
-       console.error("Error declining:", err);
+      console.error("Error declining:", err);
     }
   };
 
@@ -139,8 +139,8 @@ function LftPostDetailPage() {
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text).then(() => {
-       setCopiedLink(true);
-       setTimeout(() => setCopiedLink(false), 2000);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
     });
   };
 
@@ -153,7 +153,7 @@ function LftPostDetailPage() {
   return (
     <div className="p-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+
         <div className="lg:col-span-2 space-y-6">
           <div className="bg-gray-800 p-8 rounded-lg shadow-xl">
             <Link to={`/hackathon/${post.hackathonId}`} className="text-green-400 hover:underline">
@@ -172,29 +172,29 @@ function LftPostDetailPage() {
           {isUserCreator && pendingRequests.length > 0 && (
             <div className="bg-gray-800 p-6 rounded-lg shadow-xl border-2 border-yellow-500/50">
               <h3 className="text-xl font-bold text-yellow-400 mb-4">
-                 Pending Join Requests ({pendingRequests.length})
+                Pending Join Requests ({pendingRequests.length})
               </h3>
               <div className="space-y-3">
                 {pendingRequests.map(req => (
                   <div key={req.id} className="flex items-center justify-between bg-gray-700 p-3 rounded-lg">
                     <div className="flex items-center gap-3">
-                       <img src={req.photoURL || `https://api.dicebear.com/9.x/initials/svg?seed=${req.id}`} className="w-8 h-8 rounded-full" alt="" />
-                       <div>
-                         <p className="font-medium">{req.displayName || req.email}</p>
-                         <p className="text-xs text-gray-400">{req.skills || 'No skills listed'}</p>
-                       </div>
+                      <img src={req.photoURL || `https://api.dicebear.com/9.x/initials/svg?seed=${req.id}`} className="w-8 h-8 rounded-full" alt="" />
+                      <div>
+                        <p className="font-medium">{req.displayName || req.email}</p>
+                        <p className="text-xs text-gray-400">{req.skills || 'No skills listed'}</p>
+                      </div>
                     </div>
                     <div className="flex gap-2">
-                      <button 
-                         onClick={() => handleAcceptRequest(req.id)}
-                         disabled={isTeamFull}
-                         className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded disabled:bg-gray-500"
+                      <button
+                        onClick={() => handleAcceptRequest(req.id)}
+                        disabled={isTeamFull}
+                        className="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded disabled:bg-gray-500"
                       >
                         Accept
                       </button>
-                      <button 
-                         onClick={() => handleDeclineRequest(req.id)}
-                         className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded"
+                      <button
+                        onClick={() => handleDeclineRequest(req.id)}
+                        className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm font-bold rounded"
                       >
                         Decline
                       </button>
@@ -212,17 +212,17 @@ function LftPostDetailPage() {
             <h2 className="text-2xl font-bold mb-4">Team ({teamMembers.length} / {post.maxTeamSize})</h2>
             <div className="space-y-4 mb-6">
               {teamMembers.map((member) => (
-                  <div key={member.id} className="flex items-center gap-3">
-                    <img src={member.photoURL || `https://api.dicebear.com/9.x/initials/svg?seed=${member.email}&radius=50`} alt="" className="w-10 h-10 rounded-full bg-gray-600" />
-                    <div>
-                      <p className="font-medium text-gray-200">{member.displayName || member.email}</p>
-                      {post.creatorId === member.id && <span className="text-xs text-green-400 font-bold">Team Lead</span>}
-                    </div>
+                <div key={member.id} className="flex items-center gap-3">
+                  <img src={member.photoURL || `https://api.dicebear.com/9.x/initials/svg?seed=${member.email}&radius=50`} alt="" className="w-10 h-10 rounded-full bg-gray-600" />
+                  <div>
+                    <p className="font-medium text-gray-200">{member.displayName || member.email}</p>
+                    {post.creatorId === member.id && <span className="text-xs text-green-400 font-bold">Team Lead</span>}
                   </div>
-                ))
+                </div>
+              ))
               }
             </div>
-            
+
             {currentUser && (
               isUserOnTeam ? (
                 isUserCreator ? (
@@ -233,15 +233,15 @@ function LftPostDetailPage() {
                   </button>
                 )
               ) : hasRequested ? (
-                 <button disabled className="w-full bg-yellow-500/80 text-white font-bold py-3 px-4 rounded-lg cursor-not-allowed">
-                    Request Pending...
-                 </button>
+                <button disabled className="w-full bg-yellow-500/80 text-white font-bold py-3 px-4 rounded-lg cursor-not-allowed">
+                  Request Pending...
+                </button>
               ) : isTeamFull ? (
-                 <button disabled className="w-full bg-gray-500 text-white font-bold py-3 px-4 rounded-lg cursor-not-allowed">Team is Full</button>
+                <button disabled className="w-full bg-gray-500 text-white font-bold py-3 px-4 rounded-lg cursor-not-allowed">Team is Full</button>
               ) : (
-                 <button onClick={handleRequestJoin} disabled={isProcessing} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition disabled:bg-gray-500">
-                   {isProcessing ? 'Sending...' : 'Request to Join'}
-                 </button>
+                <button onClick={handleRequestJoin} disabled={isProcessing} className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg transition disabled:bg-gray-500">
+                  {isProcessing ? 'Sending...' : 'Request to Join'}
+                </button>
               )
             )}
             {!currentUser && (
@@ -251,7 +251,7 @@ function LftPostDetailPage() {
             )}
             {actionError && <p className="text-red-500 text-xs italic mt-4 text-center">{actionError}</p>}
           </div>
-          
+
           {isUserCreator && post.joinCode && (
             <div className="bg-gray-700 p-6 rounded-lg shadow-xl border-t-4 border-green-400">
               <h3 className="text-xl font-bold text-green-400 mb-3">Admin: Invite Friends</h3>

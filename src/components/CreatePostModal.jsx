@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 import { collection, addDoc, getDoc, doc, serverTimestamp } from 'firebase/firestore';
 
 function CreatePostModal({ hackathon, onClose, onPostCreated }) {
@@ -29,7 +29,7 @@ function CreatePostModal({ hackathon, onClose, onPostCreated }) {
     try {
       const userDocRef = doc(db, 'users', currentUser.uid);
       const userDocSnap = await getDoc(userDocRef);
-      
+
       let creatorName = currentUser.email;
       let creatorSkills = '';
 
@@ -50,18 +50,18 @@ function CreatePostModal({ hackathon, onClose, onPostCreated }) {
         creatorSkills: creatorSkills,
         postTitle: postTitle,
         ideaDescription: ideaDescription,
-        teamMembers: [currentUser.uid], 
-        maxTeamSize: newMaxTeamSize, 
-        isFull: 1 >= newMaxTeamSize, 
+        teamMembers: [currentUser.uid],
+        maxTeamSize: newMaxTeamSize,
+        isFull: 1 >= newMaxTeamSize,
         joinCode: newJoinCode, // <-- 3. Add the code to the document
-        createdAt: serverTimestamp() 
+        createdAt: serverTimestamp()
       });
 
       console.log('LFT Post created successfully!');
       setLoading(false);
-      onPostCreated(); 
+      onPostCreated();
       onClose();
-      
+
     } catch (err) {
       console.error("Error creating post: ", err);
       setError('Failed to create post. Please try again.');
@@ -70,7 +70,7 @@ function CreatePostModal({ hackathon, onClose, onPostCreated }) {
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4"
       onClick={onClose}
     >

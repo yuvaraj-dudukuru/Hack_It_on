@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 function AddHackathonModal({ onClose, onHackathonAdded }) {
@@ -77,15 +77,15 @@ function AddHackathonModal({ onClose, onHackathonAdded }) {
           </div>
 
           <div>
-             <label className="block text-gray-300 text-xs font-bold mb-2" htmlFor="externalUrl">Official Website URL</label>
-             <input type="url" id="externalUrl" value={formData.externalUrl} onChange={handleChange}
-               className="w-full p-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="https://..." />
+            <label className="block text-gray-300 text-xs font-bold mb-2" htmlFor="externalUrl">Official Website URL</label>
+            <input type="url" id="externalUrl" value={formData.externalUrl} onChange={handleChange}
+              className="w-full p-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="https://..." />
           </div>
 
           <div>
-             <label className="block text-gray-300 text-xs font-bold mb-2" htmlFor="bannerUrl">Banner Image URL (Optional)</label>
-             <input type="url" id="bannerUrl" value={formData.bannerUrl} onChange={handleChange}
-               className="w-full p-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="https://example.com/image.jpg" />
+            <label className="block text-gray-300 text-xs font-bold mb-2" htmlFor="bannerUrl">Banner Image URL (Optional)</label>
+            <input type="url" id="bannerUrl" value={formData.bannerUrl} onChange={handleChange}
+              className="w-full p-3 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="https://example.com/image.jpg" />
           </div>
 
           {error && <p className="text-red-500 text-xs italic">{error}</p>}

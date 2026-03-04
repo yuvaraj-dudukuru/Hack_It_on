@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebaseConfig';
+import { db } from '../../config/firebaseConfig';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import HackathonCard from '../components/HackathonCard';
 import AddHackathonModal from '../components/AddHackathonModal';
@@ -30,12 +30,12 @@ function HackathonsPage() {
     } catch (err) {
       console.error("Error fetching hackathons: ", err);
       if (err.message.includes("requires an index")) {
-         const simpleQuery = query(collection(db, 'hackathons'));
-         const simpleSnap = await getDocs(simpleQuery);
-         const simpleList = simpleSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-         setHackathons(simpleList);
+        const simpleQuery = query(collection(db, 'hackathons'));
+        const simpleSnap = await getDocs(simpleQuery);
+        const simpleList = simpleSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setHackathons(simpleList);
       } else {
-         setError('Failed to load hackathons.');
+        setError('Failed to load hackathons.');
       }
     } finally {
       setLoading(false);
@@ -55,18 +55,18 @@ function HackathonsPage() {
   }
 
   if (loading) {
-   return (
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {loading ? (
-      // Show 6 skeleton cards while loading
-      [...Array(6)].map((_, i) => <HackathonCardSkeleton key={i} />)
-    ) : (
-      hackathons.map(hackathon => (
-        <HackathonCard key={hackathon.id} hackathon={hackathon} />
-      ))
-    )}
-  </div>
-);
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loading ? (
+          // Show 6 skeleton cards while loading
+          [...Array(6)].map((_, i) => <HackathonCardSkeleton key={i} />)
+        ) : (
+          hackathons.map(hackathon => (
+            <HackathonCard key={hackathon.id} hackathon={hackathon} />
+          ))
+        )}
+      </div>
+    );
   }
 
   if (error) {
@@ -80,7 +80,7 @@ function HackathonsPage() {
           </div>
           <h2 className="text-2xl font-bold text-white mb-2">Error</h2>
           <p className="text-red-400">{error}</p>
-          <button 
+          <button
             onClick={fetchHackathons}
             className="mt-6 px-6 py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 font-bold rounded-xl transition-all duration-300 border border-red-500/30"
           >
@@ -94,7 +94,7 @@ function HackathonsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        
+
         {/* Page Header */}
         <div className="mb-12">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -109,8 +109,8 @@ function HackathonsPage() {
                 <p className="text-gray-400 mt-1">Discover exciting events and join the community</p>
               </div>
             </div>
-            
-            <button 
+
+            <button
               onClick={handleAddClick}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold transition-all duration-300 shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-105 shrink-0"
             >
@@ -136,7 +136,7 @@ function HackathonsPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-xl p-5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center">
@@ -150,7 +150,7 @@ function HackathonsPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-xl p-5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center">
@@ -177,7 +177,7 @@ function HackathonsPage() {
               </span>
               <div className="h-px flex-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {hackathons.map(hackathon => (
                 <HackathonCard key={hackathon.id} hackathon={hackathon} />
@@ -198,7 +198,7 @@ function HackathonsPage() {
             <p className="text-gray-500 mb-8">
               Be the first to add one and start building amazing teams!
             </p>
-            <button 
+            <button
               onClick={handleAddClick}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold transition-all duration-300 shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-105"
             >
@@ -213,10 +213,10 @@ function HackathonsPage() {
       </div>
 
       {isModalOpen && (
-        <AddHackathonModal 
+        <AddHackathonModal
           onClose={() => setIsModalOpen(false)}
           onHackathonAdded={() => {
-             fetchHackathons();
+            fetchHackathons();
           }}
         />
       )}

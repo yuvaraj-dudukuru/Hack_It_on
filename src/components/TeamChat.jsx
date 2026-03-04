@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 import { collection, addDoc, query, onSnapshot, serverTimestamp, where, doc, updateDoc, increment } from 'firebase/firestore';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';

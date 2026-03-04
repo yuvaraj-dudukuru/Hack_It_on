@@ -1,11 +1,11 @@
-import { collection, query, where, getDocs, doc, writeBatch, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
-import { auditLogService } from './auditLogService';
+import { db } from '../config/firebaseConfig';
+import { collection, addDoc, query, where, getDocs, doc, writeBatch, updateDoc, increment, serverTimestamp } from 'firebase/firestore';
+import { auditService } from './auditService';
 
 /**
- * Service for aggregating scores and finalizing rounds.
+ * Service for finalization and aggregation of scores.
  */
-export const scoreAggregationService = {
+export const scoreService = {
     /**
      * Finalize a round for a team.
      * Calculates the average or sum of scores and updates the Team document.
@@ -40,7 +40,7 @@ export const scoreAggregationService = {
             const teamRef = doc(db, 'teams', teamId);
             batch.update(teamRef, {
                 totalScore: finalScore,
-                [`round${roundNumber}Status`]: 'qualified', // Auto-qualify if finalized? Or manual?
+                [`round${roundNumber} Status`]: 'qualified', // Auto-qualify if finalized? Or manual?
                 updatedAt: serverTimestamp()
             });
 

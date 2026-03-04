@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { collection, query, where, onSnapshot, doc, setDoc, getDoc, updateDoc, increment } from 'firebase/firestore';
-import { db } from '../../firebaseConfig';
+import { collection, query, where, onSnapshot, doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../config/firebaseConfig';
 import { useAuth } from '../../context/AuthContext';
+import { auditService } from '../../services/auditService';
 import { Trophy, Github, FileText, Send, CheckCircle2, ChevronRight, Star, ExternalLink } from 'lucide-react';
 
 const JudgeDashboard = () => {
@@ -51,18 +51,21 @@ const JudgeDashboard = () => {
             await setDoc(scoreRef, {
                 teamId: selectedTeam.id,
                 judgeId: userData.uid,
-                judgeName: userData.name,
+                judgeName: userData.name || userData.displayName,
                 criteria: scores,
                 total,
                 comment,
-                timestamp: new Date()
+                timestamp: new Date().toISOString()
             });
 
-            // 2. Increment team's totalScore in Firestore
-            const teamRef = doc(db, 'teams', selectedTeam.id);
-            await updateDoc(teamRef, {
-                totalScore: increment(total)
-            });
+            // 2. Audit Log (Scores are aggregated by admin later)
+            await auditService.logEvent(
+                'SCORE_SUBMITTED',
+                userData.uid,
+                'judge',
+                selectedTeam.id,
+                { total }
+            );
 
             alert('Score submitted successfully!');
             setSelectedTeam(null);

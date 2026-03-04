@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Excalidraw } from "@excalidraw/excalidraw";
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 function TeamWhiteboard({ teamId }) {

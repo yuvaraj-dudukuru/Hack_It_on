@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext.jsx';
-import { db } from '../firebaseConfig.js';
+import { useAuth } from '../../context/AuthContext';
+import { db } from '../../config/firebaseConfig';
 import { doc, setDoc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { Link, useParams } from 'react-router-dom';
 
 function ProfilePage() {
   const { currentUser } = useAuth();
   const { userId } = useParams();
-  
+
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
   const [skills, setSkills] = useState('');
@@ -36,18 +36,18 @@ function ProfilePage() {
       const postsRef = collection(db, 'lftPosts');
       const q = query(postsRef, where("teamMembers", "array-contains", targetUid));
       const querySnapshot = await getDocs(q);
-      
+
       const projectsWithDetails = await Promise.all(querySnapshot.docs.map(async (projectDoc) => {
         const data = projectDoc.data();
         if (!data.isSubmitted) return null;
 
         const memberPromises = data.teamMembers.map(async (memberId) => {
-           const userSnap = await getDoc(doc(db, 'users', memberId));
-           let name = "Unknown";
-           if (userSnap.exists()) {
-             name = userSnap.data().displayName || "Anonymous";
-           }
-           return { id: memberId, name: name };
+          const userSnap = await getDoc(doc(db, 'users', memberId));
+          let name = "Unknown";
+          if (userSnap.exists()) {
+            name = userSnap.data().displayName || "Anonymous";
+          }
+          return { id: memberId, name: name };
         });
 
         const members = await Promise.all(memberPromises);
@@ -111,7 +111,7 @@ function ProfilePage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          
+
           {/* --- LEFT COLUMN: Edit Form (ONLY VISIBLE IF OWNING PROFILE) --- */}
           {isOwnProfile && (
             <div className="w-full lg:w-96 shrink-0">
@@ -131,11 +131,11 @@ function ProfilePage() {
                       <label className="block text-gray-300 text-sm font-semibold mb-2" htmlFor="displayName">
                         Display Name
                       </label>
-                      <input 
-                        type="text" 
-                        id="displayName" 
-                        value={displayName} 
-                        onChange={(e) => setDisplayName(e.target.value)} 
+                      <input
+                        type="text"
+                        id="displayName"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
                         className="w-full px-4 py-3 rounded-xl bg-gray-900/50 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all placeholder-gray-500"
                         placeholder="Enter your name"
                       />
@@ -145,11 +145,11 @@ function ProfilePage() {
                       <label className="block text-gray-300 text-sm font-semibold mb-2" htmlFor="bio">
                         Bio
                       </label>
-                      <textarea 
-                        id="bio" 
-                        rows="3" 
-                        value={bio} 
-                        onChange={(e) => setBio(e.target.value)} 
+                      <textarea
+                        id="bio"
+                        rows="3"
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
                         className="w-full px-4 py-3 rounded-xl bg-gray-900/50 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all resize-none placeholder-gray-500"
                         placeholder="Tell us about yourself"
                       />
@@ -159,11 +159,11 @@ function ProfilePage() {
                       <label className="block text-gray-300 text-sm font-semibold mb-2" htmlFor="skills">
                         Skills
                       </label>
-                      <input 
-                        type="text" 
-                        id="skills" 
-                        value={skills} 
-                        onChange={(e) => setSkills(e.target.value)} 
+                      <input
+                        type="text"
+                        id="skills"
+                        value={skills}
+                        onChange={(e) => setSkills(e.target.value)}
                         className="w-full px-4 py-3 rounded-xl bg-gray-900/50 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all placeholder-gray-500"
                         placeholder="React, Node.js, Python..."
                       />
@@ -176,8 +176,8 @@ function ProfilePage() {
                       </div>
                     )}
 
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 shadow-lg shadow-green-500/25 hover:shadow-green-500/40 hover:scale-[1.02]"
                     >
                       Save Changes
@@ -194,9 +194,9 @@ function ProfilePage() {
             <div className="bg-gray-800/50 backdrop-blur border border-gray-700 rounded-2xl p-8 mb-8 shadow-xl">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                 <div className="relative">
-                  <img 
-                    src={`https://api.dicebear.com/9.x/initials/svg?seed=${targetUid}`} 
-                    alt="avatar" 
+                  <img
+                    src={`https://api.dicebear.com/9.x/initials/svg?seed=${targetUid}`}
+                    alt="avatar"
                     className="w-24 h-24 rounded-2xl bg-gradient-to-br from-green-500/20 to-blue-500/20 border-2 border-gray-700 shadow-lg"
                   />
                   <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center border-4 border-gray-800">
@@ -205,7 +205,7 @@ function ProfilePage() {
                     </svg>
                   </div>
                 </div>
-                
+
                 <div className="flex-1">
                   <h1 className="text-3xl font-bold text-white mb-2">
                     {displayName || "Anonymous User"}
@@ -213,12 +213,12 @@ function ProfilePage() {
                   <p className="text-gray-400 mb-4 leading-relaxed">
                     {bio || "No bio yet."}
                   </p>
-                  
+
                   {skills && (
                     <div className="flex flex-wrap gap-2">
                       {skills.split(',').map((skill, i) => skill.trim() && (
-                        <span 
-                          key={i} 
+                        <span
+                          key={i}
                           className="px-3 py-1.5 bg-blue-500/10 text-blue-300 text-xs font-semibold rounded-lg border border-blue-500/20 hover:bg-blue-500/20 transition-colors"
                         >
                           {skill.trim()}
@@ -243,12 +243,12 @@ function ProfilePage() {
                   </p>
                 </div>
               </div>
-              
+
               {pastProjects.length > 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   {pastProjects.map(project => (
-                    <div 
-                      key={project.id} 
+                    <div
+                      key={project.id}
                       className="group bg-gray-900/50 border border-gray-700 rounded-xl p-5 hover:border-green-500/50 hover:bg-gray-900/80 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/10"
                     >
                       {/* Project Header */}
@@ -267,12 +267,12 @@ function ProfilePage() {
                             </span>
                           </div>
                         </div>
-                        
+
                         {project.projectLink && (
-                          <a 
-                            href={project.projectLink} 
-                            target="_blank" 
-                            rel="noopener noreferrer" 
+                          <a
+                            href={project.projectLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
                             className="flex items-center gap-1.5 px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 hover:text-blue-300 text-xs font-bold rounded-lg border border-blue-500/20 hover:border-blue-500/40 transition-all shrink-0"
                           >
                             <span>View</span>
@@ -282,19 +282,19 @@ function ProfilePage() {
                           </a>
                         )}
                       </div>
-                      
+
                       {/* Project Description */}
                       <p className="text-gray-400 text-sm mb-4 line-clamp-2 leading-relaxed">
                         {project.finalDescription || project.ideaDescription}
                       </p>
-                      
+
                       {/* Team Members */}
                       <div className="pt-4 border-t border-gray-800">
                         <p className="text-xs text-gray-500 mb-2 font-semibold">Team Members</p>
                         <div className="flex flex-wrap gap-2">
                           {project.members.map((member) => (
-                            <Link 
-                              key={member.id} 
+                            <Link
+                              key={member.id}
                               to={`/user/${member.id}`}
                               className="group/member inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 hover:border-gray-600 transition-all"
                             >

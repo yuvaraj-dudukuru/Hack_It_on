@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { db } from '../firebaseConfig.js';
+import { db } from '../../config/firebaseConfig';
 import { doc, onSnapshot, updateDoc, serverTimestamp, collection, query, where } from 'firebase/firestore';
-import { useAuth } from '../context/AuthContext.jsx';
+import { useAuth } from '../../context/AuthContext';
 
 // --- COMPONENTS ---
-import WorkspaceHeader from '../components/WorkspaceHeader.jsx';
-import WorkspaceMembersSidebar from '../components/WorkspaceMembersSidebar.jsx';
-import { WorkspaceLoading } from '../components/LoadingSkeletons.jsx';
-import TaskProgressBar from '../components/TaskProgressBar.jsx';
-import TeamChat from '../components/TeamChat.jsx';
-import TaskHub from '../components/TaskHub.jsx';
-import DesignHub from '../components/DesignHub.jsx';
-import TeamKnowledgeBase from '../components/TeamKnowledgeBase.jsx';
-import TeamResearch from '../components/TeamResearch.jsx';
+import WorkspaceHeader from '../../components/WorkspaceHeader';
+import WorkspaceMembersSidebar from '../../components/WorkspaceMembersSidebar';
+import { WorkspaceLoading } from '../../components/LoadingSkeletons';
+import TaskProgressBar from '../../components/TaskProgressBar';
+import TeamChat from '../../components/TeamChat';
+import TaskHub from '../../components/TaskHub';
+import DesignHub from '../../components/DesignHub';
+import TeamKnowledgeBase from '../../components/TeamKnowledgeBase';
+import TeamResearch from '../../components/TeamResearch';
 
 // --- MODALS ---
-import StartHackathonModal from '../components/StartHackathonModal.jsx';
-import SubmitProjectModal from '../components/SubmitProjectModal.jsx';
+import StartHackathonModal from '../../components/StartHackathonModal';
+import SubmitProjectModal from '../../components/SubmitProjectModal';
 
 import {
   MessageSquare,
@@ -26,7 +26,7 @@ import {
   BookOpen,
   Cpu
 } from 'lucide-react';
-import { cn } from '../design-system/theme';
+import { cn } from '../../design-system/theme';
 
 function TeamWorkspacePage() {
   const { teamId } = useParams();

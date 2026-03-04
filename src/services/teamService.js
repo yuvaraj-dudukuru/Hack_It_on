@@ -1,7 +1,10 @@
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { db } from '../config/firebaseConfig';
 
-export const userService = {
+/**
+ * Service for team and user profile operations.
+ */
+export const teamService = {
     /**
      * Get user profile by UID
      */
