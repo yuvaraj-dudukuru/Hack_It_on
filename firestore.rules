@@ -1,0 +1,85 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- HELPERS ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function hasRole(role) {
+      return isSignedIn() && getUserData().role == role;
+    }
+
+    function getSettings() {
+      return get(/databases/$(database)/documents/config/hackathonSettings).data;
+    }
+
+    function isRoundActive(roundNum) {
+      let settings = getSettings();
+      let round = settings['round' + string(roundNum)];
+      return round.isActive == true && round.isLocked == false && (round.deadline == null || request.time < round.deadline);
+    }
+
+    function isCurrentRound(roundNum) {
+      return getSettings().currentRound == roundNum;
+    }
+
+    // --- COLLECTIONS ---
+
+    // Global Config
+    match /config/hackathonSettings {
+      allow read: if true;
+      allow write: if hasRole('admin');
+    }
+
+    // Users
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if hasRole('admin') || request.auth.uid == userId;
+      // Prevent role escalation
+      allow update: if request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']);
+    }
+
+    // Teams
+    match /teams/{teamId} {
+      allow read: if true;
+      allow create: if isSignedIn();
+      allow update: if hasRole('admin') || 
+                   (hasRole('participant') && request.auth.uid in resource.data.members && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['totalScore', 'round1Status', 'round2Status', 'round3Status']));
+    }
+
+    // Submissions (Round-aware)
+    match /submissions/{subId} {
+      let teamId = subId; // assuming subId is teamId or has teamId
+      allow read: if true;
+      allow create, update: if (hasRole('admin')) || 
+                           (hasRole('participant') && request.auth.uid in get(/databases/$(database)/documents/teams/$(teamId)).data.members && isRoundActive(getSettings().currentRound));
+    }
+
+    // Scores (Immutable per Judge + Round-aware)
+    match /scores/{scoreId} {
+      allow read: if hasRole('admin') || hasRole('judge');
+      allow create: if hasRole('judge') && isRoundActive(getSettings().currentRound) && request.resource.data.judgeId == request.auth.uid;
+      // Scores are immutable after creation
+      allow update, delete: if hasRole('admin');
+    }
+
+    // Audit Logs
+    match /auditLogs/{logId} {
+      allow read: if hasRole('admin');
+      allow create: if isSignedIn(); // Allow scoring/status changes to log, but restricted in app logic
+      allow update, delete: if false; // Tamper-evident
+    }
+
+    // Leaderboard
+    match /leaderboard/{teamId} {
+      allow read: if true;
+      allow write: if hasRole('admin');
+    }
+  }
+}

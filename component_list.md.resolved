@@ -1,0 +1,34 @@
+# Component List
+
+## Common Components (`src/components/common`)
+- `Navbar`: Role-aware navigation.
+- `Footer`: Branding and important links.
+- `LeaderboardTable`: Shared leaderboard component used in Public and Admin views.
+- `StatusBadge`: Colorful badges for Round Status, Payment Status, etc.
+- `CountdownTimer`: Real-time clock for deadlines.
+
+## Participant Components (`src/components/participant`)
+- `TeamStatsCard`: Displays team name, members, and current ranking.
+- `SubmissionForm`: Input for PPT, GitHub, and Deployment links with validation.
+- `GitHubValidator`: Real-time GitHub repo existence check via API.
+- `PaymentUpload`: Interface to upload UPI payment screenshots.
+
+## Admin Components (`src/components/admin`)
+- `TeamManager`: Table with filters (verified, round 1, etc.) and action buttons.
+- `PaymentReviewModal`: View screenshot and approve/reject payment.
+- `RoundController`: Global switches to lock/unlock rounds or change status.
+- `ScoreOverride`: Manual adjustment tool for scores.
+- `CSVExporter`: Tool to download team data.
+
+## Judge Components (`src/components/judge`)
+- `ScoringPanel`: Input form for evaluation criteria (Innovation, Technical, etc.).
+- `SubmissionPreview`: Embedded viewer or links to team deliverables.
+- `AssignedTeamsList`: List of teams assigned to the judge for the current round.
+
+## Pages
+- `LandingPage`: The public face of the hackathon.
+- `AuthPage`: Register/Login with Firestore role initialization.
+- `ParticipantDashboard`: Main hub for teams.
+- `AdminDashboard`: Command center for organizers.
+- `JudgeDashboard`: Scoring interface for experts.
+- `LeaderboardPage`: Public real-time standings.
